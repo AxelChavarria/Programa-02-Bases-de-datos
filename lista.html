@@ -9,17 +9,22 @@
 <body class="body-lista">
    <h1> Lista de empleados </h1>
 
-   <form id="form-filtar">
-        <input type="text" placeholder="Buscar..." id="busqueda" class="input">
-        <button type="submit" id="buscar" class="form-btn">Buscar</button>
-    </form>
+   <div class="acomodo-lateral">
+        <form id="form-filtar">
+            <input type="text" placeholder="Buscar..." id="busqueda" class="input">
+            <button type="submit" id="buscar" class="form-btn">Buscar</button>
+        </form>
 
+        <button onclick="window.location.href='insertar.html'" class="form-btn">Agregar empleado</button>
+
+    </div>
    <table id="empleados">
     <tr>
         <th>Puesto</th>
         <th>Cédula</th>
         <th>Nombre</th>
         <th>Contratación</th>
+        <th>Acciones</th>
     </tr>  
    </table>
 

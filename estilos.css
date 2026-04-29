@@ -55,7 +55,7 @@
 }
 
 .body-lista {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
 
 }
@@ -93,4 +93,70 @@ tr:hover {
     flex-direction: column; /* 👈 esto los pone en lista */
     gap: 12px;              /* espacio entre botones */
     width: 250px;  
+}
+
+.acomodo-lateral{
+    display: flex;
+    flex-wrap: wrap;       /* permite que bajen de línea */
+    
+    gap: max; 
+    justify-content: space-between;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    appearance: none; /* quita estilo por defecto */
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+/* focus */
+select:focus {
+    border-color: #2c3e50;
+    box-shadow: 0 0 5px rgba(44, 62, 80, 0.3);
+}
+
+.body-insertar{
+    background-color: #f4f6f8;
+    margin: 0;
+    height: 100vh;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centra horizontal */
+    justify-content: center; /* centra vertical */
+}
+
+h1 {
+    font-family: Arial, sans-serif;
+}
+
+.form-insertar{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;              
+    
+    width: 300px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+}
+.acciones{
+    display:flex;
+    gap: 9px;
+    flex-wrap: wrap; 
+}
+
+.acciones button {
+    flex: 1 1 45%;     /* 👈 2 botones por fila aprox */
+    padding: 6px;
+    font-size: 12px;
 }
