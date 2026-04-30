@@ -9,6 +9,22 @@ if (formLogin) {
 
 }
 
+
+function guardarDatos(){
+
+    const fila = event.target.closest("tr");
+
+    const datos = {
+
+        id: fila.dataset.id,
+        puesto: fila.children[0].textContent,
+        identidad : fila.children[1].textContent,
+        nombre : fila.children[2].textContent
+    }
+    sessionStorage.setItem("empleado", JSON.stringify(datos));
+}
+
+
 //lista de empleados 
 
 const tablaEmpleados = document.getElementById("empleados");
@@ -22,15 +38,15 @@ if (tablaEmpleados) {
     //informacion.forEach(emp => { //${emp.} //pasar por las listas
         tablaEmpleados.innerHTML += `
             <tr data-id="1">
-                <td>ref</td>
-                <td>ref</td>
-                <td>ref</td>
+                <td>Albañil</td>
+                <td>ref 123</td>
+                <td>Ref Ref</td>
                 <td>ref</td>
                 <td class="acciones">
-                    <button onclick="window.location.href='actualizar.html'" class="form-btn">Actualizar</button>
+                    <button  class="form-btn" id="actualizar">Actualizar</button>
                     <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
                     <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
-                    <button onclick="window.location.href='listar_movimientos.html'" class="form-btn">Listar movimientos</button>
+                    <button onclick="window.location.href='movimientos.html'" class="form-btn">Movimientos</button>
                     <button onclick="window.location.href='agregar_movimiento.html'" class="form-btn">Agregar movimientos</button>
                 </td>
             </tr>`;
@@ -54,7 +70,20 @@ if (tablaEmpleados) {
         
     });
 
+    //botones
+    const botonActualizar = document.getElementById("actualizar");
+
+
+    botonActualizar.addEventListener("click", function(event) {
+        event.preventDefault();  
+
+        guardarDatos();
+        window.location.href='actualizar.html'
+        
+    });
+    
 }
+
 
 //const id = sessionStorage.getItem("idSeleccionado");  //para llamar el id
 //insertar empleado
@@ -69,6 +98,31 @@ if (formInsertar) {
         let nombre = document.getElementById("nombre").value.trim()
         let puesto = document.getElementById("puesto").value.trim()
 
-        //aqui va la funcion para llamar a la base
+        const botonAgregar = document.getElementById("agregar");
+
+
+        botonAgregar.addEventListener("click", function(event) {
+            event.preventDefault();  
+            //aqui va la funcion para llamar a la base
+        });
+        
     });
+}
+
+const formActualizar = document.getElementById("form-actualizar");
+if (formActualizar) {
+    const empleado = JSON.parse(sessionStorage.getItem("empleado"))
+    if (empleado) {
+        document.getElementById("identidad").value = empleado.identidad;
+        document.getElementById("nombre").value = empleado.nombre;
+        document.getElementById("puesto").value = empleado.puesto;
+    }
+
+    const botonActualizar = document.getElementById("actualizar");
+
+
+        botonActualizar.addEventListener("click", function(event) {
+            event.preventDefault();  
+            //aqui va la funcion para llamar a la base
+        });
 }
