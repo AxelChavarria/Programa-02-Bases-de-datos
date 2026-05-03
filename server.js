@@ -47,4 +47,50 @@ app.post('/api/admin/cargar-todo', async (req, res) => {
 });
 
 
+
+
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    const ip = req.ip || '0.0.0.0';
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inUsername', sql.VarChar, username)
+            .input('inPassword', sql.VarChar, password)
+            .input('inIP', sql.VarChar, ip)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .output('outIdUsuario', sql.Int)
+            .execute('sp_ValidarLogin');
+
+        res.json(result.output);
+    } catch (err) {
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
+
+
+
+
+app.post('/api/logout', async (req, res) => {
+    const { idUsuario } = req.body;
+    const ip = req.ip || '0.0.0.0';
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inIdUsuario', sql.Int, idUsuario)
+            .input('inIP', sql.VarChar, ip)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .execute('sp_RegistrarLogout');
+
+        res.json(result.output);
+    } catch (err) {
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
+
+
 app.listen(3001, () => console.log('Servidor corriendo en puerto 3001'));

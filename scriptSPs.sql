@@ -80,3 +80,59 @@ BEGIN
         SELECT -1 AS Codigo, ERROR_MESSAGE() AS Mensaje;
     END CATCH
 END;
+
+
+
+CREATE PROCEDURE sp_ValidarLogin
+    @inUsername VARCHAR(50),
+    @inPassword VARCHAR(50),
+    @inIP VARCHAR(50),
+    @outCodigo INT OUTPUT,
+    @outMensaje VARCHAR(100) OUTPUT,
+    @outIdUsuario INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @outIdUsuario = NULL;
+
+    SELECT @outIdUsuario = Id FROM Usuario 
+    WHERE Username = @inUsername AND Password = @inPassword;
+
+    IF @outIdUsuario IS NOT NULL -- usuario existe
+    BEGIN
+        INSERT INTO BitacoraEvento (IdTipoEvento, IdPostByUser, PostInIP, PostTime, Descripcion)
+        VALUES (1, @outIdUsuario, @inIP, GETDATE(), 'Login exitoso'); -- 1 Login Exitoso
+        
+        SET @outCodigo = 0;
+        SET @outMensaje = 'Éxito';
+    END
+
+
+
+    ELSE -- usuario no existe
+    BEGIN
+        INSERT INTO BitacoraEvento (IdTipoEvento, IdPostByUser, PostInIP, PostTime, Descripcion)
+        VALUES (2, 1, @inIP, GETDATE(), 'Intento fallido: ' + @inUsername); -- 2: Login No Exitoso
+        
+        SET @outCodigo = 50001; 
+        SET @outMensaje = 'Credenciales inválidas';
+    END
+END;
+
+
+
+
+CREATE PROCEDURE sp_RegistrarLogout
+    @inIdUsuario INT,
+    @inIP VARCHAR(50),
+    @outCodigo INT OUTPUT,
+    @outMensaje VARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO BitacoraEvento (IdTipoEvento, IdPostByUser, PostInIP, PostTime, Descripcion)
+    VALUES (4, @inIdUsuario, @inIP, GETDATE(), 'Cierre de sesión'); -- 4: Logout
+    
+    SET @outCodigo = 0;
+    SET @outMensaje = 'Logout registrado';
+END;
