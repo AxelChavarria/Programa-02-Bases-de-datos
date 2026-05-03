@@ -152,3 +152,36 @@ BEGIN
     SET @outCodigo = 0;
     SET @outMensaje = 'Logout registrado';
 END;
+
+
+
+CREATE PROCEDURE sp_InsertarEmpleado
+    @inValorDoc VARCHAR(50),
+    @inNombre VARCHAR(100),
+    @inIdPuesto INT,
+    @inIdPostByUser INT,
+    @inPostInIP VARCHAR(50),
+    @outCodigo INT OUTPUT,
+    @outMensaje VARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    -- Validar que no se repita nombre o documento de indentidad
+    IF EXISTS (SELECT 1 FROM Empleado WHERE ValorDocumentoIdentidad = @inValorDoc OR Nombre = @inNombre)
+    BEGIN
+        SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
+        FROM Error WHERE Codigo = 50005;
+        RETURN;
+    END
+
+
+    -- Si no existe, insertar
+    INSERT INTO Empleado (IdPuesto, ValorDocumentoIdentidad, Nombre, FechaContratacion, EsActivo)
+    VALUES (@inIdPuesto, @inValorDoc, @inNombre, GETDATE(), 1);
+
+    -- Insertar en bitácora
+    INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+    VALUES (11, 'Inserción Empleado: ' + @inValorDoc, @inIdPostByUser, @inPostInIP);
+
+    SET @outCodigo = 0; SET @outMensaje = 'Éxito';
+END;

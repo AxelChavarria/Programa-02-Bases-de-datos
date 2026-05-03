@@ -43,6 +43,12 @@ export async function validarLogin(datos) {
         return { outCodigo: -1, outMensaje: err.message };
     }
 }
+/*
+let datos = { username:'Axel',password:'Axel' }
+const res = await validarLogin(datos)
+console.log(res)
+*/
+
 
 
 
@@ -60,3 +66,40 @@ export async function cerrarSesion(idUsuario) {
         return { outCodigo: -1, outMensaje: err.message };
     }
 }
+
+
+
+
+
+// Entrada: datos = { valorDoc, nombre, idPuesto, idPostByUser }
+
+export async function registrarEmpleado(datos) {
+    console.log("Enviando fetch para carga de empleado...");
+    try {
+        const respuestaRaw = await fetch("http://localhost:3001/api/empleados/insertar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuestaRaw.json();
+        return resultado; 
+        
+    } catch (err) {
+        console.error("Error en registrarEmpleado:", err.message);
+        return { outCodigo: -1, outMensaje: err.message };
+    }
+}
+
+
+/*
+const nuevoEmpleado = {
+        valorDoc: "117220456",            
+        nombre: "Axel Chavarria",         
+        idPuesto: 2,                      
+        idPostByUser: 1   // Id del usuario que inserta al empleado
+    };
+
+console.log("Intentando registrar empleado...");
+const respuesta = await registrarEmpleado(nuevoEmpleado)
+*/

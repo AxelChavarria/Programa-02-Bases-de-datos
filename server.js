@@ -92,5 +92,26 @@ app.post('/api/logout', async (req, res) => {
     }
 });
 
+app.post('/api/empleados/insertar', async (req, res) => {
+    const { valorDoc, nombre, idPuesto, idPostByUser } = req.body;
+    const ip = req.ip || '127.0.0.1';
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inValorDoc', sql.VarChar, valorDoc)
+            .input('inNombre', sql.VarChar, nombre)
+            .input('inIdPuesto', sql.Int, idPuesto)
+            .input('inIdPostByUser', sql.Int, idPostByUser)
+            .input('inPostInIP', sql.VarChar, ip)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .execute('sp_InsertarEmpleado');
+
+        res.json(result.output);
+    }catch (err) {
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
+
 
 app.listen(3001, () => console.log('Servidor corriendo en puerto 3001'));
