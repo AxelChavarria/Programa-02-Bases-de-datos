@@ -93,32 +93,48 @@ CREATE PROCEDURE sp_ValidarLogin
 AS
 BEGIN
     SET NOCOUNT ON;
+    DECLARE @intentosFallidos INT;
     SET @outIdUsuario = NULL;
 
+    -- Consultar intentos fallidos 
+    SELECT @intentosFallidos = COUNT(*)
+    FROM BitacoraEvento
+    WHERE PostInIP = @inIP 
+      AND idTipoEvento = 2 -- Login No Exitoso
+      AND PostTime > DATEADD(MINUTE, -20, GETDATE());
+
+
+    IF @intentosFallidos >= 5 -- Muchos intentos fallidos
+    BEGIN
+        SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
+        FROM Error WHERE Codigo = 50002;
+        RETURN;
+    END
+
+
+    -- Validar Credenciales
     SELECT @outIdUsuario = Id FROM Usuario 
     WHERE Username = @inUsername AND Password = @inPassword;
 
-    IF @outIdUsuario IS NOT NULL -- usuario existe
+
+    IF @outIdUsuario IS NOT NULL -- Si hay usuario
     BEGIN
-        INSERT INTO BitacoraEvento (IdTipoEvento, IdPostByUser, PostInIP, PostTime, Descripcion)
-        VALUES (1, @outIdUsuario, @inIP, GETDATE(), 'Login exitoso'); -- 1 Login Exitoso
-        
-        SET @outCodigo = 0;
-        SET @outMensaje = 'Éxito';
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+        VALUES (1, 'Login Exitoso', @outIdUsuario, @inIP);
+        SET @outCodigo = 0; SET @outMensaje = 'Éxito';
     END
 
 
 
-    ELSE -- usuario no existe
-    BEGIN
-        INSERT INTO BitacoraEvento (IdTipoEvento, IdPostByUser, PostInIP, PostTime, Descripcion)
-        VALUES (2, 1, @inIP, GETDATE(), 'Intento fallido: ' + @inUsername); -- 2: Login No Exitoso
+    ELSE -- El usuario metió credenciales incorrectas
+    BEGIN  
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+        VALUES (2, 'Login No Exitoso: ' + @inUsername, 1, @inIP);
         
-        SET @outCodigo = 50001; 
-        SET @outMensaje = 'Credenciales inválidas';
+        SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
+        FROM Error WHERE Codigo = 50001; 
     END
 END;
-
 
 
 
