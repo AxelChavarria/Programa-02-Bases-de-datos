@@ -1,12 +1,23 @@
+import { validarLogin } from funcionesBD.js
+
 //log in
 
 const formLogin = document.getElementById("form-login");
 if (formLogin) {
-    let user = document.getElementById("user").value.trim()
-    let password = document.getElementById("contra").value.trim()
 
-    //aqui llamamos a la función para iniciar sesión
+    let datos = {
+        username: document.getElementById("user").value.trim(),
+        password: document.getElementById("contra").value.trim()
+    }
 
+    let resultado = validarLogin(datos) 
+
+    sessionStorage.setItem("admin", JSON.stringify(resultado[outIdUsuario]));
+
+    if (resultado == 0 ){
+        window.location.href='lista.html'
+    }
+    //terminar los códigos
 }
 
 
@@ -93,21 +104,19 @@ if (formInsertar) {
 
     formInsertar.addEventListener("submit", function(e) {
         event.preventDefault();
+     
+        const admin = JSON.parse(sessionStorage.getItem("admin"))
+        let datos = {
+            valorDoc:document.getElementById("identidad").value.trim(),
+            nombre: document.getElementById("nombre").value.trim(),
+            idPuesto:document.getElementById("puesto").value.trim(),
+            idPostByUser: admin
+        }
+        registrarEmpleado(datos)
+     });
         
-        let identificacion = document.getElementById("identidad").value.trim()
-        let nombre = document.getElementById("nombre").value.trim()
-        let puesto = document.getElementById("puesto").value.trim()
-
-        const botonAgregar = document.getElementById("agregar");
-
-
-        botonAgregar.addEventListener("click", function(event) {
-            event.preventDefault();  
-            //aqui va la funcion para llamar a la base
-        });
-        
-    });
 }
+
 
 const formActualizar = document.getElementById("form-actualizar");
 if (formActualizar) {
