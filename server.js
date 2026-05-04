@@ -13,6 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use(express.static(__dirname));
+
 const config = {
     user: 'bdd_sql_2026', 
     password: 'Tec20IC26', 
@@ -23,6 +25,11 @@ const config = {
         trustServerCertificate: true 
     }
 };
+
+// Ruta principal
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/login.html'));
+});
 
 app.post('/api/admin/cargar-todo', async (req, res) => {
     try {
