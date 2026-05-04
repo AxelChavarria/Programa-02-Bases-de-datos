@@ -43,11 +43,11 @@ export async function validarLogin(datos) {
         return { outCodigo: -1, outMensaje: err.message };
     }
 }
-/*
+
 let datos = { username:'Axel',password:'Axel' }
 const res = await validarLogin(datos)
 console.log(res)
-*/
+
 
 
 
