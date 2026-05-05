@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <header class="header">
+        <button class="form-btn" id="btnAtras" >
+            Atrás
+        </button>
+        <button class="form-btn" id="btnCerrar" >
+            Cerrar sesión
+        </button>
+    </header>
+
+    <form id="form-insertar-mov" class="form-insertar-mov">
+        <h1 >Insertar movimiento</h1>
+
+        <div class="acomodo-vertical">
+            <p>Identificación: <span id="identificacionEmpleado"></span></p>
+            <p>Nombre: <span id="nombreEmpleado"></span></p>
+            <p>Saldo de vacaciones: <span id="saldoEmpleado"></span></p>
+        </div>
+
+        <select id="tipo-movimiento">
+            <option>Cumplir mes</option>
+            <option>Bono vacacional</option>
+            <option>Reversion Debito</option>
+            <option>Disfrute de vacaciones</option>
+            <option>Venta de vacaciones</option>
+            <option>Reversion de Credito</option>
+        </select>
+
+        <input type="text" placeholder="Monto" id="monto" class="input">
+
+        <button type="submit" id="agregar" class="form-btn">Agregar</button>
+    </form>
+
+
+
+    
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

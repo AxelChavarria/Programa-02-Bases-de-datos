@@ -41,6 +41,16 @@ if (btnCerrar) {
     btnCerrar.addEventListener("click", cerrarSesionMain);
 }
 
+const btnAtras = document.getElementById("btnAtras")
+if (btnAtras) {
+    btnAtras.addEventListener("click", async function(event) {
+        event.preventDefault();
+        window.location.href='lista.html'
+    
+    
+    });
+}
+
 
 
 function guardarDatos(){

@@ -43,6 +43,7 @@
 
 .form-btn {
   padding: 10px 15px;
+  margin: 0px 5px;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
         "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   border-radius: 20px;
@@ -54,14 +55,19 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.body-lista {
-    max-width: 1000px;
-    margin: 0 auto;
-
+body{
+    background-color: #f4f6f8;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centra horizontal */
+    justify-content: center; /* centra vertical */
 }
 
 table {
-    width: 100%;
+    
+    max-width: 1000px;
     border-collapse: collapse;
     margin-top: 20px;
     background-color: white;
@@ -90,17 +96,27 @@ tr:hover {
 
 .botones{
     display: flex;
-    flex-direction: column; /* 👈 esto los pone en lista */
+    flex-direction: column; /* esto los pone en lista */
     gap: 12px;              /* espacio entre botones */
     width: 250px;  
 }
 
 .acomodo-lateral{
     display: flex;
-    flex-wrap: wrap;       /* permite que bajen de línea */
-    
-    gap: max; 
+    max-width: 750px;
+    width: 100%;
+    align-items: flex-start;
     justify-content: space-between;
+}
+
+.acomodo-vertical {
+    display: flex;
+    flex-direction: column;   
+    max-width: 750px;
+    width: 100%;
+               /* espacio entre elementos */
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 select {
@@ -122,16 +138,7 @@ select:focus {
     box-shadow: 0 0 5px rgba(44, 62, 80, 0.3);
 }
 
-.body-insertar{
-    background-color: #f4f6f8;
-    margin: 0;
-    height: 100vh;
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* centra horizontal */
-    justify-content: center; /* centra vertical */
-}
+
 
 h1 {
     font-family: Arial, sans-serif;
@@ -156,7 +163,7 @@ h1 {
 }
 
 .acciones button {
-    flex: 1 1 45%;     /* 👈 2 botones por fila aprox */
+    flex: 1 1 45%;     /* 2 botones por fila aprox */
     padding: 6px;
     font-size: 12px;
 }
@@ -164,9 +171,39 @@ h1 {
 .header {
     display: flex;
     justify-content: space-between;
+    width: 100%;
     align-items: center;
     background-color: #1f2937; /* gris oscuro */
     padding: 15px 30px;
     color: white;
     margin-bottom: 40px;
+}
+
+.form-btn-mov{
+  padding: 10px 15px;
+  margin: 0px 5px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  border-radius: 20px;
+  border: 0 !important;
+  outline: 0 !important;
+  background: teal;
+  color: white;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.form-insertar-mov{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;              
+    
+    width: 500px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
 }
