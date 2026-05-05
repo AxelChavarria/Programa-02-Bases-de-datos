@@ -135,10 +135,10 @@ export async function obtenerListaEmpleados(filtro,idPostByUser, ip) {
     }
 }
 
-
+/*
 const res = await obtenerListaEmpleados("Axel", 1, "222.111.111")
 console.log(res)
-
+*/
 
 
 
@@ -233,3 +233,27 @@ const datos = {id : 15, idPostByUser : 1, ip: "11.22.3.4"}
 const res = await eliminarEmpleado(datos)
 console.log(res)
 */
+
+
+
+export async function obtenerDetalleEmpleado(id) {
+
+    try {
+        const url = `http://localhost:3001/api/empleados/detalle/${id}`;
+
+        const res = await fetch(url);
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text);
+        }
+
+        const data = await res.json();
+        return data;
+
+    } catch (err) {
+        console.error("Error en obtenerDetalleEmpleado:", err.message);
+        return null;
+    }
+}
+const res = await obtenerDetalleEmpleado(1)
+console.log(res)

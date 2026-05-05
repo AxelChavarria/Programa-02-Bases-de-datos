@@ -515,3 +515,35 @@ BEGIN
         SET @outMensaje = ERROR_MESSAGE();
     END CATCH
 END;
+
+
+
+CREATE PROCEDURE sp_ConsultarEmpleadoDetalle
+    @inIdEmpleado INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Datos empleado
+    SELECT 
+        e.ValorDocumentoIdentidad,
+        e.Nombre,
+        e.SaldoVacaciones
+    FROM Empleado e
+    WHERE e.Id = @inIdEmpleado AND e.EsActivo = 1;
+
+    -- Movimientos
+    SELECT 
+        m.Fecha,
+        tm.Nombre AS TipoMovimiento,
+        m.Monto,
+        m.NuevoSaldo,
+        u.Username AS UsuarioRegistro,
+        m.PostInIP,
+        m.PostTime
+    FROM Movimiento m
+    INNER JOIN TipoMovimiento tm ON m.IdTipoMovimiento = tm.Id
+    INNER JOIN Usuario u ON m.IdPostByUser = u.Id
+    WHERE m.IdEmpleado = @inIdEmpleado
+    ORDER BY m.Fecha DESC;
+END;

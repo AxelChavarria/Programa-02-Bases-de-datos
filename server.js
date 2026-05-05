@@ -223,5 +223,25 @@ app.delete('/api/empleados/eliminar', async (req, res) => {
     }
 });
 
+app.get('/api/empleados/detalle/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inIdEmpleado', sql.Int, parseInt(id))
+            .execute('sp_ConsultarEmpleadoDetalle');
+
+        res.json({
+            empleado: result.recordsets[0][0], // info empleado
+            movimientos: result.recordsets[1]   // lista movimientos
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 app.listen(3001, () => console.log('Servidor corriendo en puerto 3001'));
