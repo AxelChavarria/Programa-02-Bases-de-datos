@@ -7,7 +7,12 @@
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body class="body-lista">
-   <h1> Lista de empleados </h1>
+    <header class="header">
+        <h1 class="logo">Lista de empleados</h1>
+        <button class="form-btn" id="btnCerrar">
+            Cerrar sesión
+        </button>
+    </header>
 
    <div class="acomodo-lateral">
         <form id="form-filtar">
@@ -18,14 +23,18 @@
         <button onclick="window.location.href='insertar.html'" class="form-btn">Agregar empleado</button>
 
     </div>
-   <table id="tabla-empleados">
-    <tr>
-        <th>Puesto</th>
-        <th>Cédula</th>
-        <th>Nombre</th>
-        <th>Contratación</th>
-        <th>Acciones</th>
-    </tr>  
+   <table>
+        <thead>
+            <tr>
+                <th>Puesto</th>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr> 
+        </thead>
+
+        <tbody id="tabla-empleados">
+        </tbody>
    </table>
 
     <script type="module" src="main.js"></script>

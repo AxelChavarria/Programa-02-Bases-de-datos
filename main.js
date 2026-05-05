@@ -1,4 +1,4 @@
-import { validarLogin } from './funcionesBD.js';
+import { validarLogin, cerrarSesion, obtenerListaEmpleados } from './funcionesBD.js';
 
 //log in
 
@@ -19,10 +19,28 @@ if (formLogin) {
  
         if (resultado["outCodigo"] == 0 ){
             window.location.href='lista.html'
+        } else if (resultado["outCodigo"] == 50001 ){
+            alert("Creedenciales incorrectas")
+        } else if (resultado["outCodigo"] == 50002 ){
+            alert("Muchos intentos, IP bloqueada")
         }
 
     });
 }
+
+function cerrarSesionMain(){
+
+    const id = JSON.parse(sessionStorage.getItem("admin"))
+    cerrarSesion(id)
+    sessionStorage.removeItem('admin')
+    window.location.href='login.html'
+}
+
+const btnCerrar = document.getElementById("btnCerrar")
+if (btnCerrar) {
+    btnCerrar.addEventListener("click", cerrarSesionMain);
+}
+
 
 
 function guardarDatos(){
@@ -46,42 +64,54 @@ const tablaEmpleados = document.getElementById("tabla-empleados");
 if (tablaEmpleados) {
 
     //obtenemos la información
-    //let informacion = cargarDatos() //traer datos
+    let informacion = await obtenerListaEmpleados("") //traer datos
 
 
     //desplegamos la información
-    //informacion.forEach(emp => { //${emp.} //pasar por las listas
+    informacion.forEach(emp => {  //pasar por las listas
         tablaEmpleados.innerHTML += `
-            <tr data-id="1">
-                <td>Albañil</td>
-                <td>ref 123</td>
-                <td>Ref Ref</td>
-                <td>ref</td>
+            <tr data-id="${emp.Id}">
+                <td>${emp.NombrePuesto}</td>
+                <td>${emp.ValorDocumentoIdentidad}</td>
+                <td>${emp.Nombre}</td>
+                
                 <td class="acciones">
                     <button  class="form-btn" id="actualizar">Actualizar</button>
                     <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
                     <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
                     <button onclick="window.location.href='movimientos.html'" class="form-btn">Movimientos</button>
-                    <button onclick="window.location.href='agregar_movimiento.html'" class="form-btn">Agregar movimientos</button>
                 </td>
             </tr>`;
-    //});
+    });
 
     //boton para filtrar con validaciones 
     const boton = document.getElementById("buscar");
 
-    boton.addEventListener("click", function(event) {
+    boton.addEventListener("click", async function(event) {
         event.preventDefault();     
 
         const valor = document.getElementById("busqueda").value.trim()
         
-        if (/^\d+$/.test(valor)){
-            console.log("numeros")
-        }
-        
-        if (/^[a-zA-Z]+$/.test(texto)) {
-            console.log("Solo letras");
-        }
+        let informacion = await obtenerListaEmpleados(valor) //traer datos
+
+        tablaEmpleados.innerHTML = ""
+
+        //desplegamos la información
+        informacion.forEach(emp => {  //pasar por las listas
+            tablaEmpleados.innerHTML += `
+                <tr data-id="${emp.Id}">
+                    <td>${emp.NombrePuesto}</td>
+                    <td>${emp.ValorDocumentoIdentidad}</td>
+                    <td>${emp.Nombre}</td>
+                    
+                    <td class="acciones">
+                        <button  class="form-btn" id="actualizar">Actualizar</button>
+                        <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
+                        <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
+                        <button onclick="window.location.href='movimientos.html'" class="form-btn">Movimientos</button>
+                    </td>
+                </tr>`;
+        });
         
     });
 
@@ -152,7 +182,11 @@ if (formInsertar) {
             idPuesto: idPuesto,
             idPostByUser: admin
         }
-        registrarEmpleado(datos)
+        let resultado = registrarEmpleado(datos)
+
+        if (resultado["outCodigo"] = 0){
+            alert("Insertado con éxito")
+        }
      });
         
 }

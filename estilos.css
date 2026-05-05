@@ -160,3 +160,13 @@ h1 {
     padding: 6px;
     font-size: 12px;
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f2937; /* gris oscuro */
+    padding: 15px 30px;
+    color: white;
+    margin-bottom: 40px;
+}
