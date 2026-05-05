@@ -131,12 +131,15 @@ app.post('/api/empleados/insertar', async (req, res) => {
 
 
 app.get('/api/empleados', async (req, res) => {
-    const { filtro } = req.query;
+    const { filtro, idPostByUser,ip } = req.query;
+     
 
     try {
         let pool = await sql.connect(config);
         let result = await pool.request()
             .input('inFiltro', sql.VarChar, filtro || '')
+            .input('inIdPostByUser', sql.Int, parseInt(idPostByUser))
+            .input('inIP', sql.VarChar, ip)
             .execute('sp_ListarEmpleados');
 
         res.json(result.recordset); 
@@ -199,7 +202,6 @@ app.put('/api/empleados/actualizar', async (req, res) => {
 
 
 app.delete('/api/empleados/eliminar', async (req, res) => {
-    console.log("🔥 LLEGÓ A DELETE");
 
     const { id, idPostByUser, ip } = req.body;
 

@@ -189,8 +189,10 @@ END;
 
 
 
-CREATE PROCEDURE sp_ListarEmpleados
-    @inFiltro VARCHAR(100)
+ALTER PROCEDURE sp_ListarEmpleados
+    @inFiltro VARCHAR(100),
+    @inIdPostByUser INT,
+    @inIP VARCHAR(50)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -208,6 +210,9 @@ BEGIN
         INNER JOIN Puesto P ON E.IdPuesto = P.Id
         WHERE E.EsActivo = 1
         ORDER BY E.Nombre ASC;
+
+
+
     END
 
 
@@ -225,6 +230,13 @@ BEGIN
         WHERE E.ValorDocumentoIdentidad LIKE '%' + @inFiltro + '%'
           AND E.EsActivo = 1
         ORDER BY E.Nombre ASC;
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+            VALUES (
+                12, 
+                'Consulta por documento de identidad exitosa.',
+                @inIdPostByUser, @inIP, GETDATE()
+            );
+            
     END
 
 
@@ -242,8 +254,16 @@ BEGIN
         WHERE E.Nombre LIKE '%' + @inFiltro + '%'
           AND E.EsActivo = 1
         ORDER BY E.Nombre ASC;
+
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+            VALUES (
+                11, 
+                'Consulta por nombre exitosa.',
+                @inIdPostByUser, @inIP, GETDATE()
+            );
     END
 END;
+
 
 
 
