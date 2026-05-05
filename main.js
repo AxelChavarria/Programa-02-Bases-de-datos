@@ -42,7 +42,7 @@ function guardarDatos(){
 
 //lista de empleados 
 
-const tablaEmpleados = document.getElementById("empleados");
+const tablaEmpleados = document.getElementById("tabla-empleados");
 if (tablaEmpleados) {
 
     //obtenemos la información
@@ -112,20 +112,44 @@ if (formInsertar) {
         const puesto = document.getElementById("puesto").value.trim()
         const admin = JSON.parse(sessionStorage.getItem("admin"))
 
+        let idPuesto = 0;
         switch (puesto) {
-            case valor1:
-                // Código si expresion === valor1
+            case "Albañil":
+                idPuesto = 10
                 break;
-            case valor2:
-                // Código si expresion === valor2
+            case "Asistente":
+                idPuesto = 5
                 break;
-            default:
-                // Código si no hay coincidencias
+            case "Cajero":
+                idPuesto = 1
+                break;
+            case "Camarero":
+                idPuesto = 2
+                break;
+            case "Conductor":
+                idPuesto = 4
+                break;
+            case "Conserje":
+                idPuesto = 9
+                break;
+            case "Cuidador":
+                idPuesto = 3
+                break;
+            case "Fontanero":
+                idPuesto = 7
+                break;
+            case "Niñera":
+                idPuesto = 8
+                break;
+            case "Recepcionista":
+                idPuesto = 6
+                break;
         }
+
         let datos = {
             valorDoc:document.getElementById("identidad").value.trim(),
             nombre: document.getElementById("nombre").value.trim(),
-            idPuesto:puesto,
+            idPuesto: idPuesto,
             idPostByUser: admin
         }
         registrarEmpleado(datos)
