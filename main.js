@@ -1,23 +1,27 @@
-import { validarLogin } from funcionesBD.js
+import { validarLogin } from './funcionesBD.js';
 
 //log in
 
 const formLogin = document.getElementById("form-login");
 if (formLogin) {
 
-    let datos = {
-        username: document.getElementById("user").value.trim(),
-        password: document.getElementById("contra").value.trim()
-    }
+    formLogin.addEventListener("submit", async function(event) {
+        event.preventDefault();
+        let datos = {
+            username: document.getElementById("user").value.trim(),
+            password: document.getElementById("contra").value.trim()
+        }
 
-    let resultado = validarLogin(datos) 
+        const resultado = await validarLogin(datos) 
 
-    sessionStorage.setItem("admin", JSON.stringify(resultado[outIdUsuario]));
 
-    if (resultado == 0 ){
-        window.location.href='lista.html'
-    }
-    //terminar los códigos
+        sessionStorage.setItem("admin", JSON.stringify(resultado["outIdUsuario"]));
+ 
+        if (resultado["outCodigo"] == 0 ){
+            window.location.href='lista.html'
+        }
+
+    });
 }
 
 
@@ -105,11 +109,23 @@ if (formInsertar) {
     formInsertar.addEventListener("submit", function(e) {
         event.preventDefault();
      
+        const puesto = document.getElementById("puesto").value.trim()
         const admin = JSON.parse(sessionStorage.getItem("admin"))
+
+        switch (puesto) {
+            case valor1:
+                // Código si expresion === valor1
+                break;
+            case valor2:
+                // Código si expresion === valor2
+                break;
+            default:
+                // Código si no hay coincidencias
+        }
         let datos = {
             valorDoc:document.getElementById("identidad").value.trim(),
             nombre: document.getElementById("nombre").value.trim(),
-            idPuesto:document.getElementById("puesto").value.trim(),
+            idPuesto:puesto,
             idPostByUser: admin
         }
         registrarEmpleado(datos)

@@ -1,4 +1,4 @@
-import sql from 'mssql';
+
 
 export async function cargarTodoXML() {
     console.log("Enviando fetch para carga masiva XML");
