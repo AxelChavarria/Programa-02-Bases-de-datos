@@ -185,3 +185,59 @@ BEGIN
 
     SET @outCodigo = 0; SET @outMensaje = 'Éxito';
 END;
+
+CREATE PROCEDURE sp_ListarEmpleados
+    @inFiltro VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Sin filtro (retorna todo)
+    IF @inFiltro IS NULL OR @inFiltro = ''
+    BEGIN
+        SELECT 
+            E.Id, 
+            E.Nombre, 
+            E.ValorDocumentoIdentidad, 
+            P.Nombre AS NombrePuesto, 
+            E.SaldoVacaciones
+        FROM Empleado E
+        INNER JOIN Puesto P ON E.IdPuesto = P.Id
+        WHERE E.EsActivo = 1
+        ORDER BY E.Nombre ASC;
+    END
+
+
+    -- solo números (cédula)
+    ELSE IF @inFiltro NOT LIKE '%[^0-9]%'
+    BEGIN
+        SELECT 
+            E.Id, 
+            E.Nombre, 
+            E.ValorDocumentoIdentidad, 
+            P.Nombre AS NombrePuesto, 
+            E.SaldoVacaciones
+        FROM Empleado E
+        INNER JOIN Puesto P ON E.IdPuesto = P.Id
+        WHERE E.ValorDocumentoIdentidad LIKE '%' + @inFiltro + '%'
+          AND E.EsActivo = 1
+        ORDER BY E.Nombre ASC;
+    END
+
+    
+    --letras (por Nombre)
+    ELSE
+    BEGIN
+        SELECT 
+            E.Id, 
+            E.Nombre, 
+            E.ValorDocumentoIdentidad, 
+            P.Nombre AS NombrePuesto, 
+            E.SaldoVacaciones
+        FROM Empleado E
+        INNER JOIN Puesto P ON E.IdPuesto = P.Id
+        WHERE E.Nombre LIKE '%' + @inFiltro + '%'
+          AND E.EsActivo = 1
+        ORDER BY E.Nombre ASC;
+    END
+END;

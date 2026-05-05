@@ -103,3 +103,26 @@ const nuevoEmpleado = {
 console.log("Intentando registrar empleado...");
 const respuesta = await registrarEmpleado(nuevoEmpleado)
 */
+
+// Entrada: filtro
+// Salida: array de empleados
+export async function obtenerListaEmpleados(filtro) {
+    try {
+        const url = `http://localhost:3001/api/empleados?filtro=${encodeURIComponent(filtro)}`;
+        const respuestaRaw = await fetch(url);
+        
+        if (!respuestaRaw.ok) throw new Error("Error al obtener empleados");
+        
+        const empleados = await respuestaRaw.json();
+        return empleados; // Array de objetos [{Id, Nombre, ...}]
+        
+    } catch (err) {
+        console.error("Error en obtenerListaEmpleados:", err.message);
+        return [];
+    }
+}
+
+/*
+const res = await obtenerListaEmpleados("393939")
+console.log(res)
+*/

@@ -99,6 +99,8 @@ app.post('/api/logout', async (req, res) => {
     }
 });
 
+
+
 app.post('/api/empleados/insertar', async (req, res) => {
     const { valorDoc, nombre, idPuesto, idPostByUser } = req.body;
     const ip = req.ip || '127.0.0.1';
@@ -117,6 +119,23 @@ app.post('/api/empleados/insertar', async (req, res) => {
         res.json(result.output);
     }catch (err) {
         res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
+
+
+
+app.get('/api/empleados', async (req, res) => {
+    const { filtro } = req.query;
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inFiltro', sql.VarChar, filtro || '')
+            .execute('sp_ListarEmpleados');
+
+        res.json(result.recordset); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
