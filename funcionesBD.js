@@ -172,7 +172,7 @@ console.log(respuesta)
 
 
   
-
+/*
    const datos ={
         valorDoc: "2024252331",
         nombre: "Axel",
@@ -181,7 +181,7 @@ console.log(respuesta)
         idPostByUser: 1,
         ip: "192.168.1.1"
     }
-    
+*/
 export async function actualizarEmpleado(datos) {
     const res = await fetch("http://localhost:3001/api/empleados/actualizar", {
         method: "PUT",
@@ -199,6 +199,31 @@ export async function actualizarEmpleado(datos) {
         throw new Error("La API no devolvió JSON válido");
     }
 }
-
+/*
 const res = await actualizarEmpleado(datos)
 console.log(res)
+*/
+
+
+
+
+export async function eliminarEmpleado(datos) {
+    const res = await fetch("http://localhost:3001/api/empleados/eliminar", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+    });
+
+    const text = await res.text(); 
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        throw new Error("La API no devolvió JSON válido");
+    }
+}
+/*
+const datos = {id : 15, idPostByUser : 1, ip: "11.22.3.4"}
+const res = await eliminarEmpleado(datos)
+console.log(res)
+*/

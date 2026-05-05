@@ -173,7 +173,6 @@ app.post('/api/movimientos/insertar', async (req, res) => {
 
 
 app.put('/api/empleados/actualizar', async (req, res) => {
-    console.log("🔥 LLEGÓ A UPDATE");
 
     const { idPostByUser, id, valorDoc, nombre, idPuesto, ip } = req.body;
 
@@ -198,6 +197,29 @@ app.put('/api/empleados/actualizar', async (req, res) => {
     }
 });
 
+
+app.delete('/api/empleados/eliminar', async (req, res) => {
+    console.log("🔥 LLEGÓ A DELETE");
+
+    const { id, idPostByUser, ip } = req.body;
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inId', sql.Int, id)
+            .input('inIdPostByUser', sql.Int, idPostByUser)
+            .input('inIP', sql.VarChar(50), ip)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .execute('sp_EliminarEmpleado');
+
+        res.json(result.output);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
 
 
 app.listen(3001, () => console.log('Servidor corriendo en puerto 3001'));

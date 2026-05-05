@@ -321,7 +321,7 @@ END;
 
 
 
-ALTER PROCEDURE sp_ActualizarEmpleado
+Create PROCEDURE sp_ActualizarEmpleado
     @inIdPostByUser INT,
     @inId INT,
     @inValorDoc VARCHAR(50),
@@ -430,4 +430,68 @@ BEGIN
         SET @outMensaje = ERROR_MESSAGE();
     END CATCH
 
+END;
+
+
+
+
+CREATE PROCEDURE sp_EliminarEmpleado
+    @inId INT,
+    @inIdPostByUser INT,
+    @inIP VARCHAR(50),
+    @outCodigo INT OUTPUT,
+    @outMensaje VARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+
+        -- Validar existencia
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM Empleado 
+            WHERE Id = @inId AND EsActivo = 1
+        )
+        BEGIN
+            SET @outCodigo = 50001;
+            SET @outMensaje = 'Empleado no existe o ya está inactivo';
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                9,
+                'Eliminación fallida. Empleado no existe. Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+            RETURN;
+        END
+
+        BEGIN TRANSACTION;
+
+            -- Borrado lógico
+            UPDATE Empleado
+            SET EsActivo = 0
+            WHERE Id = @inId;
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                10,
+                'Empleado eliminado (lógico) de Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+        COMMIT;
+
+        SET @outCodigo = 0;
+        SET @outMensaje = 'Empleado eliminado correctamente';
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK;
+        SET @outCodigo = 50000;
+        SET @outMensaje = ERROR_MESSAGE();
+    END CATCH
 END;
