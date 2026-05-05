@@ -26,10 +26,6 @@ const config = {
     }
 };
 
-app.use((req, res, next) => {
-    console.log(`➡️ ${req.method} ${req.url}`);
-    next();
-});
 
 
 
@@ -173,6 +169,35 @@ app.post('/api/movimientos/insertar', async (req, res) => {
         res.status(500).json({ outCodigo: -1, outMensaje: err.message });
     }
 });
+
+
+
+app.put('/api/empleados/actualizar', async (req, res) => {
+    console.log("🔥 LLEGÓ A UPDATE");
+
+    const { idPostByUser, id, valorDoc, nombre, idPuesto, ip } = req.body;
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inIdPostByUser', sql.Int, idPostByUser)
+            .input('inId', sql.Int, id)
+            .input('inValorDoc', sql.VarChar(50), valorDoc)
+            .input('inNombre', sql.VarChar(100), nombre)
+            .input('inIdPuesto', sql.Int, idPuesto)
+            .input('inIP', sql.VarChar(50), ip)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .execute('sp_ActualizarEmpleado');
+
+        res.json(result.output);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
+    }
+});
+
 
 
 app.listen(3001, () => console.log('Servidor corriendo en puerto 3001'));

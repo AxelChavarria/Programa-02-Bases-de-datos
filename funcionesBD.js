@@ -99,7 +99,7 @@ export async function registrarEmpleado(datos) {
 }
 
 
-
+/*
 const nuevoEmpleado = {
         valorDoc: "2026",            
         nombre: "Fabián Gutiérrez",         
@@ -109,7 +109,7 @@ const nuevoEmpleado = {
 
 console.log("Intentando registrar empleado...");
 const respuesta = await registrarEmpleado(nuevoEmpleado)
-
+*/
 
 // Entrada: filtro
 // Salida: array de empleados
@@ -167,3 +167,38 @@ const datos= { IdEmpleado : 1, IdTipoMovimiento : 2, monto : 5.5, postByUser : 1
 const respuesta = await insertarMovimiento(datos);
 console.log(respuesta)
 */
+
+
+
+
+  
+
+   const datos ={
+        valorDoc: "2024252331",
+        nombre: "Axel",
+        id: 1,
+        idPuesto: 2,
+        idPostByUser: 1,
+        ip: "192.168.1.1"
+    }
+    
+export async function actualizarEmpleado(datos) {
+    const res = await fetch("http://localhost:3001/api/empleados/actualizar", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+    });
+
+    const text = await res.text(); // 👈 clave
+
+    console.log("RESPUESTA CRUDA:", text);
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        throw new Error("La API no devolvió JSON válido");
+    }
+}
+
+const res = await actualizarEmpleado(datos)
+console.log(res)

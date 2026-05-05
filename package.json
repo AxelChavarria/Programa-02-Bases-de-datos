@@ -1,9 +1,4 @@
 {
-<<<<<<< Updated upstream
-=======
-  "name": "mi-proyecto",
-  "version": "1.0.0",
->>>>>>> Stashed changes
   "type": "module",
   "dependencies": {
     "express": "^4.18.2",

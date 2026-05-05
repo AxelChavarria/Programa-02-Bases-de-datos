@@ -318,3 +318,116 @@ BEGIN
         SET @outCodigo = 50000; SET @outMensaje = ERROR_MESSAGE();
     END CATCH
 END;
+
+
+
+ALTER PROCEDURE sp_ActualizarEmpleado
+    @inIdPostByUser INT,
+    @inId INT,
+    @inValorDoc VARCHAR(50),
+    @inNombre VARCHAR(100),
+    @inIdPuesto INT,
+    @inIP VARCHAR(50),
+    @outCodigo INT OUTPUT,
+    @outMensaje VARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+
+        -- Validar que exista
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM Empleado 
+            WHERE Id = @inId AND EsActivo = 1
+        )
+        BEGIN
+            SET @outCodigo = 50001;
+            SET @outMensaje = 'Empleado no existe';
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                7,
+                'Actualización fallida, empleado no existe. Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+            RETURN;
+        END
+
+        -- Validar documento duplicado
+        IF EXISTS (
+            SELECT 1 
+            FROM Empleado 
+            WHERE ValorDocumentoIdentidad = @inValorDoc AND Id <> @inId AND EsActivo =)
+        BEGIN
+            SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
+            FROM Error WHERE Codigo = 50006;
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                7,
+                'Actualización fallida, documento duplicado. Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+            RETURN;
+        END
+
+        -- Validar nombre duplicado
+        IF EXISTS (
+            SELECT 1 
+            FROM Empleado 
+            WHERE Nombre = @inNombre
+            AND Id <> @inId
+            AND EsActivo = 1
+        )
+        BEGIN
+            SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
+            FROM Error WHERE Codigo = 50007;
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                7,
+                'Actualización fallida, nombre duplicado. Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+            RETURN;
+        END
+
+        BEGIN TRANSACTION;
+
+            UPDATE Empleado
+            SET ValorDocumentoIdentidad = @inValorDoc,
+                Nombre = @inNombre,
+                IdPuesto = @inIdPuesto
+            WHERE Id = @inId;
+
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
+            VALUES (
+                8,
+                'Empleado actualizado correctamente. Id: ' + CAST(@inId AS VARCHAR),
+                @inIdPostByUser,
+                @inIP
+            );
+
+        COMMIT TRANSACTION;
+
+        SET @outCodigo = 0;
+        SET @outMensaje = 'Empleado actualizado correctamente';
+
+    END TRY
+
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+
+        SET @outCodigo = 50000;
+        SET @outMensaje = ERROR_MESSAGE();
+    END CATCH
+
+END;
