@@ -108,6 +108,9 @@ BEGIN
     BEGIN
         SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
         FROM Error WHERE Codigo = 50002;
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+        VALUES (3, 'Login Deshabilitado', @outIdUsuario, @inIP, GETDATE());
+        SET @outCodigo = 0; SET @outMensaje = 'Éxito';
         RETURN;
     END
 
@@ -119,8 +122,8 @@ BEGIN
 
     IF @outIdUsuario IS NOT NULL -- Si hay usuario
     BEGIN
-        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
-        VALUES (1, 'Login Exitoso', @outIdUsuario, @inIP);
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+        VALUES (1, 'Login Exitoso', @outIdUsuario, @inIP, GETDATE());
         SET @outCodigo = 0; SET @outMensaje = 'Éxito';
     END
 
@@ -128,8 +131,8 @@ BEGIN
 
     ELSE -- El usuario metió credenciales incorrectas
     BEGIN  
-        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP)
-        VALUES (2, 'Login No Exitoso: ' + @inUsername, 1, @inIP);
+        INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+        VALUES (2, 'Login No Exitoso: ' + @inUsername, 1, @inIP, GETDATE());
         
         SELECT @outCodigo = Codigo, @outMensaje = Descripcion 
         FROM Error WHERE Codigo = 50001; 

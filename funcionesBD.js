@@ -43,11 +43,11 @@ export async function validarLogin(datos) {
         return { outCodigo: -1, outMensaje: err.message };
     }
 }
-/*
+
 let datos = { username:'Axel',password:'Axel' }
 const res = await validarLogin(datos)
 console.log(res)
-*/
+
 
 
 
@@ -167,12 +167,14 @@ export async function insertarMovimiento(movimiento) {
     }
 }
 
+
 /*
 const datos= { IdEmpleado : 1, IdTipoMovimiento : 2, monto : 5.5, postByUser : 1, postInIP : "121.111"}
     
 const respuesta = await insertarMovimiento(datos);
 console.log(respuesta)
 */
+
 
 
 
@@ -255,5 +257,7 @@ export async function obtenerDetalleEmpleado(id) {
         return null;
     }
 }
+/*
 const res = await obtenerDetalleEmpleado(1)
 console.log(res)
+*/
