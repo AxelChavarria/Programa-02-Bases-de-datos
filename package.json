@@ -1,9 +1,12 @@
 {
+<<<<<<< Updated upstream
+=======
+  "name": "mi-proyecto",
+  "version": "1.0.0",
+>>>>>>> Stashed changes
   "type": "module",
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "fs": "^0.0.1-security",
-    "mssql": "^12.5.0"
+    "express": "^4.18.2",
+    "mssql": "^10.0.0"
   }
 }

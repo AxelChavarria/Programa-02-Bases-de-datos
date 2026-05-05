@@ -186,6 +186,9 @@ BEGIN
     SET @outCodigo = 0; SET @outMensaje = 'Éxito';
 END;
 
+
+
+
 CREATE PROCEDURE sp_ListarEmpleados
     @inFiltro VARCHAR(100)
 AS
@@ -224,7 +227,7 @@ BEGIN
         ORDER BY E.Nombre ASC;
     END
 
-    
+
     --letras (por Nombre)
     ELSE
     BEGIN
@@ -240,4 +243,78 @@ BEGIN
           AND E.EsActivo = 1
         ORDER BY E.Nombre ASC;
     END
+END;
+
+
+
+
+
+CREATE PROCEDURE sp_InsertarMovimiento
+    @inIdEmpleado INT,
+    @inIdTipoMovimiento INT,
+    @inMonto DECIMAL(10,2),
+    @inIdPostByUser INT, 
+    @inPostInIP VARCHAR(50),
+    @outCodigo INT,
+    @outMensaje VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @saldoActual DECIMAL(10,2), @tipoAccion INT, @nuevoSaldo DECIMAL(10,2);
+    DECLARE @nombreEmp VARCHAR(100), @tipoMovNombre VARCHAR(100);
+
+    BEGIN TRY
+        -- Datos empleado
+        SELECT @saldoActual = SaldoVacaciones, 
+               @nombreEmp = Nombre 
+               FROM Empleado WHERE Id = @inIdEmpleado;
+
+        -- Datos de la accion
+        SELECT @tipoAccion = TipoAccion,
+               @tipoMovNombre = Nombre 
+               FROM TipoMovimiento WHERE Id = @inIdTipoMovimiento;
+
+        SET @nuevoSaldo = @saldoActual + (@inMonto * @tipoAccion); -- Calcular nuevo saldo
+
+
+        -- Validación de saldo negativo
+        IF @nuevoSaldo < 0
+        BEGIN
+            SELECT @outCodigo = Codigo, @outMensaje = Descripcion FROM Error WHERE Codigo = 50006;
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+            VALUES (
+                13, 
+                CONCAT('INTENTO FALLIDO: Inserto movimiento de ', @tipoMovNombre, ' para ', @nombreEmp, '. Saldo insuficiente.'),
+                @inIdPostByUser, @inPostInIP, GETDATE()
+            );
+            RETURN;
+        END
+
+        BEGIN TRANSACTION;
+
+            -- Registrar el movimiento
+            INSERT INTO Movimiento (IdEmpleado, IdTipoMovimiento, Fecha, Monto, NuevoSaldo, IdPostByUser, PostInIP, PostTime)
+            VALUES (@inIdEmpleado, @inIdTipoMovimiento, GETDATE(), @inMonto, @nuevoSaldo, @inIdPostByUser, @inPostInIP, GETDATE());
+
+            -- Actualizar el saldo del empleado
+            UPDATE Empleado SET SaldoVacaciones = @nuevoSaldo WHERE Id = @inIdEmpleado;
+
+            -- Inserción en BitacoraEvento 
+            INSERT INTO BitacoraEvento (idTipoEvento, Descripcion, IdPostByUser, PostInIP, PostTime)
+            VALUES (
+                14, 
+                CONCAT('Movimiento de ', @tipoMovNombre, ' para: ', @nombreEmp, '. Monto: ', @inMonto, '. Nuevo Saldo: ', @nuevoSaldo),
+                @inIdPostByUser, 
+                @inPostInIP, 
+                GETDATE()
+            );
+        COMMIT TRANSACTION;
+        SET @outCodigo = 0; SET @outMensaje = 'Movimiento registrado con éxito.';
+
+    END TRY
+
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        SET @outCodigo = 50000; SET @outMensaje = ERROR_MESSAGE();
+    END CATCH
 END;

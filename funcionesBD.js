@@ -82,27 +82,34 @@ export async function registrarEmpleado(datos) {
             body: JSON.stringify(datos)
         });
 
+        if (!respuestaRaw.ok) {
+            const texto = await respuestaRaw.text();
+            throw new Error(`HTTP ${respuestaRaw.status}: ${texto}`);
+        }
+
         const resultado = await respuestaRaw.json();
-        return resultado; 
-        
+        console.log("RESPUESTA DEL API:", resultado);
+
+        return resultado;
+
     } catch (err) {
-        console.error("Error en registrarEmpleado:", err.message);
+        console.error("Error en registrarEmpleado:", err);
         return { outCodigo: -1, outMensaje: err.message };
     }
 }
 
 
-/*
+
 const nuevoEmpleado = {
-        valorDoc: "117220456",            
-        nombre: "Axel Chavarria",         
+        valorDoc: "2026",            
+        nombre: "Fabián Gutiérrez",         
         idPuesto: 2,                      
         idPostByUser: 1   // Id del usuario que inserta al empleado
     };
 
 console.log("Intentando registrar empleado...");
 const respuesta = await registrarEmpleado(nuevoEmpleado)
-*/
+
 
 // Entrada: filtro
 // Salida: array de empleados
@@ -123,6 +130,40 @@ export async function obtenerListaEmpleados(filtro) {
 }
 
 /*
-const res = await obtenerListaEmpleados("393939")
+const res = await obtenerListaEmpleados("")
 console.log(res)
+*/
+
+
+
+export async function insertarMovimiento(movimiento) {
+    try {
+        const respuestaRaw = await fetch(`http://localhost:3001/api/movimientos/insertar`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(movimiento)
+        });
+
+        if (!respuestaRaw.ok) {
+            throw new Error(`Error en el servidor: ${respuestaRaw.statusText}`);
+        }
+
+        const resultado = await respuestaRaw.json();
+        
+        // El resultado contiene outCodigo y outMensaje del SP
+        return resultado; 
+
+    } catch (error) {
+        console.error("Error en la comunicación con el API:", error.message);
+        return { outCodigo: -1, outMensaje: error.message };
+    }
+}
+
+/*
+const datos= { IdEmpleado : 1, IdTipoMovimiento : 2, monto : 5.5, postByUser : 1, postInIP : "121.111"}
+    
+const respuesta = await insertarMovimiento(datos);
+console.log(respuesta)
 */

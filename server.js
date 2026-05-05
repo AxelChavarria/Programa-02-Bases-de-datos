@@ -26,6 +26,13 @@ const config = {
     }
 };
 
+app.use((req, res, next) => {
+    console.log(`➡️ ${req.method} ${req.url}`);
+    next();
+});
+
+
+
 // Ruta principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/login.html'));
@@ -124,6 +131,9 @@ app.post('/api/empleados/insertar', async (req, res) => {
 
 
 
+
+
+
 app.get('/api/empleados', async (req, res) => {
     const { filtro } = req.query;
 
@@ -136,6 +146,31 @@ app.get('/api/empleados', async (req, res) => {
         res.json(result.recordset); 
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+
+
+
+app.post('/api/movimientos/insertar', async (req, res) => {
+    console.log("entro")
+    const { IdEmpleado, IdTipoMovimiento, monto, postByUser, postInIP } = req.body;
+
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+            .input('inIdEmpleado', sql.Int, IdEmpleado)
+            .input('inIdTipoMovimiento', sql.Int, IdTipoMovimiento)
+            .input('inMonto', sql.Decimal(10, 2), monto)
+            .input('inIdPostByUser', sql.Int, postByUser)
+            .input('inPostInIP', sql.VarChar, postInIP)
+            .output('outCodigo', sql.Int)
+            .output('outMensaje', sql.VarChar(100))
+            .execute('sp_InsertarMovimiento');
+
+        res.json(result.output);
+    } catch (err) {
+        res.status(500).json({ outCodigo: -1, outMensaje: err.message });
     }
 });
 
