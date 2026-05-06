@@ -1,4 +1,4 @@
-import { validarLogin, cerrarSesion, obtenerListaEmpleados, obtenerDetalleEmpleado, insertarMovimiento, actualizarEmpleado } from './funcionesBD.js';
+import { validarLogin, cerrarSesion, obtenerListaEmpleados, obtenerDetalleEmpleado, insertarMovimiento, actualizarEmpleado, eliminarEmpleado } from './funcionesBD.js';
 
 //log in
 
@@ -102,7 +102,7 @@ if (tablaEmpleados) {
                 
                 <td class="acciones">
                     <button  class="form-btn actualizar" id="actualizar">Actualizar</button>
-                    <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
+                    <button class="form-btn borrar">Borrar</button>
                     <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
                     <button  id="mov" class="form-btn mov">Movimientos</button>
                 </td>
@@ -141,7 +141,7 @@ if (tablaEmpleados) {
     });
 
     //botones
-    tablaEmpleados.addEventListener("click", function(e) {
+    tablaEmpleados.addEventListener("click", async function(e) {
 
         // BOTÓN MOVIMIENTOS
         if (e.target.classList.contains("mov")) {
@@ -165,6 +165,33 @@ if (tablaEmpleados) {
 
             guardarDatos(id);
             window.location.href = 'actualizar.html';
+        }
+
+        // BOTÓN BORRAR
+        if (e.target.classList.contains("borrar")) {
+
+            e.preventDefault();
+
+            const confirmar = confirm("¿Deseas ver eliminar a esta persona?");
+
+            if (confirmar) {
+                const fila = event.target.closest("tr");
+                const datos = {
+                    id: fila.dataset.id,
+                    idPostByUser: admin,
+                    ip: "190.171.113.80" 
+                }
+                const resultado = await eliminarEmpleado(datos)
+                
+                if (resultado["outCodigo"] == 0){
+                    alert("Eliminado correctamente")
+                    location.reload();
+                } else if (resultado["outCodigo"] == 50001){
+                    alert("Empleado no existe o está inactivo")
+                } else if (resultado["outCodigo"] == 50000){
+                    alert("Error inesperado")
+                }
+            }
         }
 
     });
@@ -414,6 +441,7 @@ if (formInsertarMov) {
 
         if (resultado["outCodigo"] == 0){
             alert("Movimiento insertado con éxito")
+            location.reload();
         } else if (resultado["outCodigo"] == 50006){
             alert("Saldo insuficiente")
         } else if (resultado["outCodigo"] == 50000){
