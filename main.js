@@ -47,7 +47,7 @@ if (btnAtras) {
     btnAtras.addEventListener("click", async function(event) {
         event.preventDefault();
         window.location.href='lista.html'
-    
+        sessionStorage.removeItem("empleado");
     
     });
 }
@@ -64,19 +64,17 @@ if (btnAtrasM) {
 
 
 //funcion auxiliar
-function guardarDatos(){
+function guardarDatos(fila, id){
 
-    const fila = event.target.closest("tr");
-
+    console.log(fila)
     const datos = {
-
-        id: fila.dataset.id,
+        id: id,
         puesto: fila.children[0].textContent,
-        identidad : fila.children[1].textContent,
-        nombre : fila.children[2].textContent
-    }
+        identidad: fila.children[1].textContent,
+        nombre: fila.children[2].textContent
+    };
 
-    console.log(datos)
+    console.log(datos);
     sessionStorage.setItem("empleado", JSON.stringify(datos));
 }
 
@@ -103,7 +101,7 @@ if (tablaEmpleados) {
                 <td class="acciones">
                     <button  class="form-btn actualizar" id="actualizar">Actualizar</button>
                     <button class="form-btn borrar">Borrar</button>
-                    <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
+                    <button  class="form-btn consultar">Consultar</button>
                     <button  id="mov" class="form-btn mov">Movimientos</button>
                 </td>
             </tr>`;
@@ -131,7 +129,7 @@ if (tablaEmpleados) {
                     
                     <td class="acciones">
                         <button class="form-btn actualizar" >Actualizar</button>
-                        <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
+                        <button class="form-btn">Borrar</button>
                         <button  class="form-btn consultar">Consultar</button>
                         <button class="form-btn mov" >Movimientos</button>
                     </td>
@@ -151,7 +149,7 @@ if (tablaEmpleados) {
             const fila = e.target.closest("tr");
             const id = fila.dataset.id;
 
-            guardarDatos(id);
+            guardarDatos(fila, id);
             window.location.href = 'movimientos.html';
         }
 
@@ -163,7 +161,7 @@ if (tablaEmpleados) {
             const fila = e.target.closest("tr");
             const id = fila.dataset.id;
 
-            guardarDatos(id);
+            guardarDatos(fila, id);
             window.location.href = 'actualizar.html';
         }
 
@@ -201,7 +199,7 @@ if (tablaEmpleados) {
             const fila = e.target.closest("tr");
             const id = fila.dataset.id;
 
-            guardarDatos(id);
+            guardarDatos(fila, id);
             window.location.href = 'consultar.html';
         }
 
@@ -462,10 +460,12 @@ if (formInsertarMov) {
         
 }
 
+//consultar
+
 const divConsultar = document.getElementById("consultar");
 if (divConsultar) {
     const empleado = JSON.parse(sessionStorage.getItem("empleado"))
-    
+    console.log(empleado)
     //obtenemos la información
     
     let informacion = await obtenerDetalleEmpleado(empleado.id) //traer datos
