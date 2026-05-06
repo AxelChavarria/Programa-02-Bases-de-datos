@@ -132,7 +132,7 @@ if (tablaEmpleados) {
                     <td class="acciones">
                         <button class="form-btn actualizar" >Actualizar</button>
                         <button onclick="window.location.href='borrar.html'" class="form-btn">Borrar</button>
-                        <button onclick="window.location.href='consultar.html'" class="form-btn">Consultar</button>
+                        <button  class="form-btn consultar">Consultar</button>
                         <button class="form-btn mov" >Movimientos</button>
                     </td>
                 </tr>`;
@@ -192,6 +192,17 @@ if (tablaEmpleados) {
                     alert("Error inesperado")
                 }
             }
+        }
+
+        if (e.target.classList.contains("consultar")) {
+
+            e.preventDefault();
+
+            const fila = e.target.closest("tr");
+            const id = fila.dataset.id;
+
+            guardarDatos(id);
+            window.location.href = 'consultar.html';
         }
 
     });
@@ -451,4 +462,18 @@ if (formInsertarMov) {
         
 }
 
+const divConsultar = document.getElementById("consultar");
+if (divConsultar) {
+    const empleado = JSON.parse(sessionStorage.getItem("empleado"))
+    
+    //obtenemos la información
+    
+    let informacion = await obtenerDetalleEmpleado(empleado.id) //traer datos
+    
+    const infoEmpleado = informacion.empleado;
 
+    document.getElementById("identificacionEmpleado").textContent = infoEmpleado.ValorDocumentoIdentidad;
+    document.getElementById("nombreEmpleado").textContent = infoEmpleado.Nombre;
+    document.getElementById("saldoEmpleado").textContent = infoEmpleado.SaldoVacaciones;
+    document.getElementById("puestoEmpleado").textContent = empleado.puesto;
+}
